@@ -1,0 +1,179 @@
+#include<stdio.h>
+#include<malloc.h>
+#include<stdlib.h>
+#include<iostream>
+
+typedef struct Node {
+	int data;
+	struct Node* pNext;
+}NODE, * PNODE;
+
+//函数声明
+void travres_list(PNODE pHead);
+PNODE create_list();
+int length_list(PNODE pHead);
+void sort_list(PNODE pHead);
+bool insert_list(PNODE pHead, int pos, int val);
+bool delete_list(PNODE phead, int pos, int* val);
+
+bool delete_list(PNODE phead, int pos, int* val) {
+	PNODE p = phead;
+	int i{ 0 };
+	while (p->pNext!=NULL&&i<pos-1)
+	{
+		p = p->pNext;
+		i++;
+	}
+	if (p->pNext == NULL || i > pos - 1)
+		return false;
+	PNODE q=p->pNext;
+	*val = q->data;
+	p->pNext = p->pNext->pNext;
+	free(q);
+	q = NULL;
+	return true;
+}
+
+
+
+
+
+
+
+bool insert_list(PNODE pHead, int pos, int val) {
+	//PNODE pHead;
+	PNODE p = pHead;
+	//PNODE q=NULL;
+	int i{ 0 };
+	while (p!=NULL&&i<pos-1)
+	{
+		p = p->pNext;
+		i++;
+	}
+	if (p == NULL || i > pos - 1)
+		return false;
+	PNODE pNew = (PNODE)malloc(sizeof(NODE));
+	if (NULL == pNew) {
+		printf("分配失败，程序终止");
+		exit(-1);
+	}
+	pNew->data = val;
+	PNODE q = p->pNext;
+	p->pNext = pNew;
+	pNew->pNext = q;
+	
+	return true;
+}
+
+
+
+void sort_list(PNODE pHead) {
+	PNODE p ;
+	PNODE q;
+	for (p = pHead->pNext; p != NULL; p = p->pNext) {
+		for (q = p->pNext; q != NULL; q = q->pNext) {
+			if (p->data > q->data) {
+				int t = q->data;
+				q->data = p->data;
+				p->data = t;
+			}
+
+		}
+
+	}
+
+
+	return;
+
+
+}
+
+
+
+int length_list(PNODE pHead) {
+	PNODE p = pHead->pNext;
+	int length{0};
+	while (p!=NULL)
+	{
+		length++;
+		p = p->pNext;
+	}
+	return length;
+}
+
+
+PNODE create_list() {
+	PNODE pHead = (PNODE)malloc(sizeof(NODE));
+	if (NULL == pHead) {
+		printf("分配失败，程序终止");
+		exit(-1);
+	}
+	PNODE pTail = pHead;
+	pTail->pNext = NULL;
+	int len{ 0 };
+	std::cout << "请输入你所需要的节点个数：";
+	std::cin >> len;
+	for (int i = 0; i < len; i++) {
+		int val;
+		printf("请输入第%d节点的值:", i + 1);
+		std::cin >> val;
+		PNODE pNew = (PNODE)malloc(sizeof(NODE));
+		if (NULL == pNew) {
+			printf("分配失败，程序终止");
+			exit(-1);
+		}
+		pNew->data = val;
+		pTail->pNext = pNew;
+		pNew->pNext = NULL;
+		pTail = pNew;
+	}
+
+
+
+	return pHead;
+
+}
+
+void travres_list(PNODE pHead) {
+	PNODE p = pHead->pNext;
+	while (p!=NULL)
+	{
+		printf("%d", p->data);
+		printf("  ");
+		p = p->pNext;
+	}
+
+
+}
+
+
+
+
+
+int main() {
+
+	PNODE pHead;
+	pHead = NULL;
+
+	pHead = create_list();
+
+	travres_list(pHead);
+	int length = length_list(pHead);
+	printf("表长为：%d", length);
+	printf("\n");
+
+	//sort_list(pHead);
+
+	//travres_list(pHead);
+
+	//insert_list(pHead,4, 10);
+	//travres_list(pHead);
+	int val{ 0 };
+	if (delete_list(pHead, 1, &val)) {
+		printf("删除成功，你删除的值为%d", val);
+		printf("\n");
+	}
+	travres_list(pHead);
+	return 0;
+}
+
